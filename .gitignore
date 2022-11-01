@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Build files
+build/
+.vscode/c_cpp_properties.json
+CMakeFiles/
+CMakeCache.txt
