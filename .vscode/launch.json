@@ -7,7 +7,7 @@
             "request": "launch",
             // Resolved by CMake Tools:
             "program": "${command:cmake.launchTargetPath}",
-            "args": ["~/Downloads/IMG_2590.jpeg"],
+            "args": ["~/Downloads/surf_vids/IMG_2210.MOV", "33"],
             "cwd": "${workspaceFolder}",
             "environment": [
                 {
