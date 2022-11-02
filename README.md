@@ -6,6 +6,10 @@ Embedded computer vision surf tracking camera, YOLOv3 with darknet on NVIDIA Jet
   <img src="./images/surf_sample_yolov3.jpg" width="30%"> 
 </p>
 
+<p align="center">
+  <img src="./images/IMG_11873.gif" width="30%">
+</p>
+
 ## Pre-requisits
 
 ### darknet
@@ -35,13 +39,13 @@ https://docs.opencv.org/4.6.0/d7/d9f/tutorial_linux_install.html
 sudo apt update && sudo apt install -y cmake g++ wget unzip
 # Download and unpack sources
 wget -O opencv.zip https://github.com/opencv/opencv/archive/4.6.0.zip
+wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.6.0.zip
 unzip opencv.zip
-# Create build directory
+unzip opencv_contrib.zip
+# Create build directory and switch into it
 mkdir -p build && cd build
 # Configure
-cmake  ../opencv-4.6.0
+cmake -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-4.6.0/modules ../opencv-4.6.0
 # Build
 cmake --build .
-# Install
-sudo make install
 ```

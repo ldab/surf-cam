@@ -1,54 +1,85 @@
-#include <iostream>            // for standard I/O
-#include <string>              // for strings
-#include <iomanip>             // for controlling float print precision
-#include <sstream>             // string to number conversion
-#include <opencv2/core.hpp>    // Basic OpenCV structures (cv::Mat, Scalar)
-#include <opencv2/imgproc.hpp> // Gaussian Blur
+#include <opencv2/core/utility.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/tracking.hpp>
 #include <opencv2/videoio.hpp>
-#include <opencv2/highgui.hpp> // OpenCV window I/O
+#include <opencv2/highgui.hpp>
+#include <iostream>
+#include <cstring>
+
 using namespace std;
 using namespace cv;
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
-    if (argc != 3)
+    // show help
+    if (argc < 2)
     {
-        cout << "Not enough parameters" << endl;
+        cout << " Usage: tracker <video_name>\n"
+                " examples:\n"
+                " example_tracking_kcf Bolt/img/%04d.jpg\n"
+                " example_tracking_kcf faceocc2.webm\n"
+             << endl;
+        return 0;
+    }
+    // declares all required variables
+    Rect roi;
+    Mat frame;
+    // create a tracker object
+    Ptr<Tracker> tracker = TrackerKCF::create();
+    // set input video
+    std::string video = argv[1];
+    VideoCapture cap(video);
+    // get bounding box
+    cap >> frame;
+    roi = selectROI("tracker", frame);
+    // quit if ROI was not selected
+    if (roi.width == 0 || roi.height == 0)
+        return 0;
+    // initialize the tracker
+    tracker->init(frame, roi);
+    // perform the tracking process
+    printf("Start the tracking process, press ESC to quit.\n");
+
+    const string source = argv[1];                                   // the source file name
+    string::size_type pAt = source.find_last_of('.');                // Find extension point
+    const string NAME = source.substr(0, pAt) + argv[2][0] + ".avi"; // Form the new name with container
+    int ex = static_cast<int>(cap.get(CAP_PROP_FOURCC));             // Get Codec Type- Int form
+
+    // Transform from int to char via Bitwise operators
+    char EXT[] = {(char)(ex & 0XFF), (char)((ex & 0XFF00) >> 8), (char)((ex & 0XFF0000) >> 16), (char)((ex & 0XFF000000) >> 24), 0};
+
+    Size S = Size((int)cap.get(CAP_PROP_FRAME_WIDTH), // Acquire input size
+                  (int)cap.get(CAP_PROP_FRAME_HEIGHT));
+    VideoWriter outputVideo; // Open the output
+
+    outputVideo.open(NAME, ex, cap.get(CAP_PROP_FPS), S, true);
+
+    if (!outputVideo.isOpened())
+    {
+        cout << "Could not open the output video for write: " << source << endl;
         return -1;
     }
-    stringstream conv;
-    const string sourceReference = argv[1];
-    int delay;
-    conv << argv[2] << endl;
-    conv >> delay; // take out the numbers
-    int frameNum = -1;                 // Frame counter
-    VideoCapture captRefrnc(sourceReference);
-    if (!captRefrnc.isOpened())
+    cout << "Input frame resolution: Width=" << S.width << "  Height=" << S.height
+         << " of nr#: " << cap.get(CAP_PROP_FRAME_COUNT) << endl;
+    cout << "Input codec type: " << EXT << endl;
+
+    for (;;)
     {
-        cout << "Could not open reference " << sourceReference << endl;
-        return -1;
-    }
-    Size refS = Size((int)captRefrnc.get(CAP_PROP_FRAME_WIDTH),
-                     (int)captRefrnc.get(CAP_PROP_FRAME_HEIGHT));
-    const char *WIN_RF = "Reference";
-    // Windows
-    namedWindow(WIN_RF, WINDOW_AUTOSIZE);
-    moveWindow(WIN_RF, refS.width, 0);        // 750,  2 (bernat =0)
-    cout << "Reference frame resolution: Width=" << refS.width << "  Height=" << refS.height
-         << " of nr#: " << captRefrnc.get(CAP_PROP_FRAME_COUNT) << endl;
-    Mat frameReference;
-    for (;;) // Show the image captured in the window and repeat
-    {
-        captRefrnc >> frameReference;
-        if (frameReference.empty())
-        {
-            cout << " < < <  Game over!  > > > ";
+        // get frame from the video
+        cap >> frame;
+        // stop the program if no more images
+        if (frame.rows == 0 || frame.cols == 0)
             break;
-        }
-        ++frameNum;
-        imshow(WIN_RF, frameReference);
-        char c = (char)waitKey(delay);
-        if (c == 27)
+        // update the tracking result
+        tracker->update(frame, roi);
+        // draw the tracked object
+        rectangle(frame, roi, Scalar(255, 0, 0), 2, 1);
+        // show image with the tracked object
+        imshow("tracker", frame);
+        outputVideo.write(frame);
+        // Write frame to video output
+        // quit on ESC button
+        if (waitKey(1) == 27)
             break;
     }
     return 0;

@@ -36,3 +36,4 @@ build/
 .vscode/c_cpp_properties.json
 CMakeFiles/
 CMakeCache.txt
+.vscode/settings.json
