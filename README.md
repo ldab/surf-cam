@@ -1,5 +1,5 @@
 # surf-cam
-Embedded computer vision surf tracking camera, YOLOv3 with darknet on NVIDIA Jetson Nano and streaming with FFmpeg (Wi-Fi and LTE)
+Embedded computer vision surf tracking camera, OpenCV on NVIDIA Jetson Nano and streaming with FFmpeg (Wi-Fi and LTE)
 
 <p align="center">
   <img src="./images/surf_sample.jpeg" width="30%">
@@ -12,15 +12,7 @@ Embedded computer vision surf tracking camera, YOLOv3 with darknet on NVIDIA Jet
 
 ## Pre-requisits
 
-### darknet
-
-```
-git clone https://github.com/pjreddie/darknet.git
-cd darknet
-make
-```
-
-## CUDA
+### CUDA
 
 https://developer.nvidia.com/cuda-downloads
 
