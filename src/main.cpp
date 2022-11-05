@@ -6,6 +6,8 @@
 #include <iostream>
 #include <cstring>
 
+// https://docs.opencv.org/4.6.0/d2/d0a/tutorial_introduction_to_tracker.html
+
 using namespace std;
 using namespace cv;
 
@@ -36,6 +38,9 @@ int main(int argc, char **argv)
     if (roi.width == 0 || roi.height == 0)
         return 0;
     // initialize the tracker
+
+    printf("%d, %d, %d, %d\r\n",roi.x, roi.y, roi.width, roi.height);
+
     tracker->init(frame, roi);
     // perform the tracking process
     printf("Start the tracking process, press ESC to quit.\n");
