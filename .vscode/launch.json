@@ -7,7 +7,17 @@
             "request": "launch",
             // Resolved by CMake Tools:
             "program": "${command:cmake.launchTargetPath}",
-            "args": ["sample/IMG_1187.MP4", "33"],
+            "args": [
+                "--config=/home/leo/darknet/cfg/yolov3.cfg",
+                "--model=/home/leo/darknet/yolov3.weights",
+                "--classes=models/object_detection_classes_yolov3.txt",
+                "--width=416",
+                "--height=416",
+                "--scale=0.00392",
+                "--thr=0.2",
+                "--input=sample/IMG_1187.MP4",
+                "--rgb"
+            ],
             "cwd": "${workspaceFolder}",
             "environment": [
                 {
