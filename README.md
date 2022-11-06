@@ -7,8 +7,10 @@ Embedded computer vision surf tracking camera, OpenCV on NVIDIA Jetson Nano and 
 </p>
 
 <p align="center">
-  <img src="./images/IMG_11873.gif" width="30%">
+  <img src="./images/IMG_1187.gif" width="30%">
 </p>
+
+## TODO
 
 ## Pre-requisits
 
@@ -25,7 +27,6 @@ wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/
 
 https://docs.opencv.org/4.6.0/d7/d9f/tutorial_linux_install.html
 
-
 ```
 # Install minimal prerequisites (Ubuntu 18.04 as reference)
 sudo apt update && sudo apt install -y cmake g++ wget unzip
@@ -41,3 +42,11 @@ cmake -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-4.6.0/modules ../opencv-4.6.
 # Build
 cmake --build .
 ```
+
+## Known issues & improvements
+
+## draftbook
+
+https://docs.opencv.org/4.x/d8/d19/tutorial_stitcher.html
+
+## Credits
