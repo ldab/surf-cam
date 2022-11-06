@@ -7,8 +7,10 @@ Embedded computer vision surf tracking camera, OpenCV on NVIDIA Jetson Nano and 
 </p>
 
 <p align="center">
-  <img src="./images/IMG_11873.gif" width="30%">
+  <img src="./images/IMG_1187.gif" width="30%">
 </p>
+
+## TODO
 
 ## Pre-requisits
 
@@ -41,3 +43,11 @@ cmake -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-4.6.0/modules ../opencv-4.6.
 # Build
 cmake --build .
 ```
+
+## Known issues & improvements
+
+## draftbook
+
+https://docs.opencv.org/4.x/d8/d19/tutorial_stitcher.html
+
+## Credits
