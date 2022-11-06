@@ -27,7 +27,6 @@ wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/
 
 https://docs.opencv.org/4.6.0/d7/d9f/tutorial_linux_install.html
 
-
 ```
 # Install minimal prerequisites (Ubuntu 18.04 as reference)
 sudo apt update && sudo apt install -y cmake g++ wget unzip
