@@ -7,7 +7,8 @@ Embedded computer vision surf tracking camera, OpenCV on NVIDIA Jetson Nano and 
 </p>
 
 <p align="center">
-  <img src="./images/IMG_1187.gif" width="30%">
+  <img src="./images/IMG_1187.gif" width="50%">
+  <img src="./images/IMG_1187_cropped.gif" width="50%">
 </p>
 
 ## TODO

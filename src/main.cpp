@@ -193,22 +193,33 @@ int main(int argc, char **argv)
       source.substr(sAt, pAt - sAt) + "_detec" +
       source.substr(pAt); // Form the new name with container
 
+  const string outCropName =
+      source.substr(sAt, pAt - sAt) + "_crop" +
+      source.substr(pAt); // Form the new name with container
+
   // Get input codec
   int ex =
       static_cast<int>(cap.get(CAP_PROP_FOURCC)); // Get Codec Type- Int form
 
   // Transform from int to char via Bitwise operators
-  char EXT[] = {(char)(ex & 0XFF), (char)((ex & 0XFF00) >> 8),
-                (char)((ex & 0XFF0000) >> 16), (char)((ex & 0XFF000000) >> 24),
-                0};
+  char EXT[]    = {(char)(ex & 0XFF), (char)((ex & 0XFF00) >> 8),
+                   (char)((ex & 0XFF0000) >> 16), (char)((ex & 0XFF000000) >> 24),
+                   0};
 
-  Size S     = Size((int)cap.get(CAP_PROP_FRAME_WIDTH), // Acquire input size
-                    (int)cap.get(CAP_PROP_FRAME_HEIGHT));
+  Size S        = Size((int)cap.get(CAP_PROP_FRAME_WIDTH), // Acquire input size
+                       (int)cap.get(CAP_PROP_FRAME_HEIGHT));
 
-  VideoWriter outputVideo; // Open the output
+  int cropWidth = (int)cap.get(CAP_PROP_FRAME_WIDTH) / 4;
+  int cropHeight = (int)cap.get(CAP_PROP_FRAME_HEIGHT) / 4;
 
-  string outputPath = "output/" + outputName;
+  VideoWriter outputVideo, outputVideoCropped; // Open the output
+
+  string outputPath  = "output/" + outputName;
+  string outCropPath = "output/" + outCropName;
+
   outputVideo.open(outputPath, ex, cap.get(CAP_PROP_FPS), S, true);
+  outputVideoCropped.open(outCropPath, ex, cap.get(CAP_PROP_FPS),
+                          Size(cropWidth, cropHeight), true);
 
   if (!outputVideo.isOpened()) {
     cout << "Could not open the output video for write: " << source << endl;
@@ -313,9 +324,11 @@ int main(int argc, char **argv)
                                        "with Inference Engine backend.");
 
   // Process frames.
-  Mat frame, blob;
+  Mat origframe, frame, blob;
   while (waitKey(1) < 0) {
-    cap >> frame;
+    cap >> origframe;
+    origframe.copyTo(frame);
+
     if (frame.empty()) {
       waitKey(1);
       break;
@@ -335,6 +348,32 @@ int main(int argc, char **argv)
     std::string label = format("Inference time: %.2f ms", t);
     putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5,
             Scalar(0, 255, 0));
+
+    for (size_t i = 0; i < outs.size(); ++i) {
+      // Network produces output blob with a shape NxC where N is a number of
+      // detected objects and C is a number of classes + 4 where the first 4
+      // numbers are [center_x, center_y, width, height]
+      float *data = (float *)outs[i].data;
+      for (int j = 0; j < outs[i].rows; ++j, data += outs[i].cols) {
+        Mat scores = outs[i].row(j).colRange(5, outs[i].cols);
+        Point classIdPoint;
+        double confidence;
+        minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
+
+        if (classIdPoint.x == 37 && confidence > confThreshold) {
+          int centerX = (int)(data[0] * origframe.cols);
+          int centerY = (int)(data[1] * origframe.rows);
+
+          // Rect expects top left x,y, thefore need to offset center
+          Mat cropped =
+              origframe(Rect(centerX - cropWidth / 2, centerY - cropHeight / 2,
+                             cropWidth, cropHeight));
+          // cv::namedWindow("Cropped image", WINDOW_FREERATIO);
+          cv::imshow("Cropped image", cropped);
+          outputVideoCropped.write(cropped);
+        }
+      }
+    }
 
     outputVideo.write(frame);
     imshow(kWinName, frame);
