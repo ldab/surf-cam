@@ -2,6 +2,28 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--source",
+                "sample/IMG_1187.MP4",
+                "--model",
+                "models/ssdlite_mobiledet_coco_qat_postprocess_edgetpu.tflite",
+                "--labels",
+                "models/coco_labels.txt",
+                "--threshold",
+                "0.2",
+                "--filter",
+                "surfboard",
+                "--print",
+                "--loop"
+            ]
+        },
+        {
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
