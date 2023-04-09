@@ -18,7 +18,7 @@
                 "--threshold",
                 "0.2",
                 "--filter",
-                "surfboard",
+                "surfboard,person",
                 "--print",
                 "--loop"
             ]
